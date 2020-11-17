@@ -1,5 +1,5 @@
 # Water_Meter_Reading_Recognition
-### Data
+### Data:
 **data_link:** https://www.datafountain.cn/competitions/480/datasets
 
 ### The project is divided into three parts as following:
