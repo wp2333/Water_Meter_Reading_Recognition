@@ -4,5 +4,17 @@
 
 ### The project is divided into three parts as following:
 + **Preprocess:** Find the location of the ROI
-+ **segmentation:** Divide the squence of numbers into single one
-+ **recognition:** Identify each single number
++ **Segmentation:** Divide the squence of numbers into single one
++ **Recognition:** Identify each single number
+
+### Preprocess
++ Doing...
+
+### Segmentation
++ Doing...
+
+### Recognition
++ **Method 1:** based on template matching
++ **Method 2:** based on CNN
++ **Method 3:** based on capsule networks
+**NOTE:**all methods works to single digit recognition
