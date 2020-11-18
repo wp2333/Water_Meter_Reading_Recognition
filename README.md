@@ -17,5 +17,4 @@
 + **Method 1:** based on template matching
 + **Method 2:** based on CNN
 + **Method 3:** based on capsule networks
-
-**NOTE:**all methods works to single digit recognition
++ **NOTE: All methods works to single digit recognition**
