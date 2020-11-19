@@ -16,5 +16,9 @@
 ### Recognition
 + **Method 1:** based on template matching
 + **Method 2:** based on CNN
-+ **Method 3:** based on capsule networks
++ **Method 3:** based on capsule networks SOTA！！！
 + **NOTE: All methods works to single digit recognition**
++ **data structure：**
++   data/0/x.png
+    ...
++   data/9/x.png
