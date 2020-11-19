@@ -18,7 +18,7 @@
 + **Method 2:** based on CNN
 + **Method 3:** based on capsule networks SOTA！！！
 + **NOTE: All methods works to single digit recognition**
-+ **data structure：**
-+   data/0/x.png
-    ...
-+   data/9/x.png
++ **data structure：**(both train and test)
+    + data/0/x.png
+      ...
+    + data/9/x.png
