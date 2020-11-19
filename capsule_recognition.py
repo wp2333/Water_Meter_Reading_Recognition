@@ -22,14 +22,14 @@ from tqdm import tqdm
 
 BATCH_SIZE = 128
 NUM_CLASSES = 10
-EPOCHS = 1
+EPOCHS = 100
 NUM_ROUTING_ITERATIONS = 3
 
 
 def softmax(input, dim=1):
     transposed_input = input.transpose(dim, len(input.size()) - 1)
     softmaxed_output = F.softmax(transposed_input.contiguous().view(-1, transposed_input.size(-1)), dim=-1)
-    return softmaxed_output.view(*transposed_input.size()).transpose(dim, len(input.size()) - 1)
+    return softmaxed_output.contiguous().view(*transposed_input.size()).transpose(dim, len(input.size()) - 1)
 
 
 def augmentation(x, max_shift=2):
@@ -81,7 +81,7 @@ class CapsuleLayer(nn.Module):
                     delta_logits = (priors * outputs).sum(dim=-1, keepdim=True)
                     logits = logits + delta_logits
         else:
-            outputs = [capsule(x).view(x.size(0), -1, 1) for capsule in self.capsules]
+            outputs = [capsule(x).contiguous().view(x.size(0), -1, 1) for capsule in self.capsules]
             outputs = torch.cat(outputs, dim=-1)
             outputs = self.squash(outputs)
 
@@ -120,7 +120,7 @@ class CapsuleNet(nn.Module):
             _, max_length_indices = classes.max(dim=1)
             y = Variable(torch.eye(NUM_CLASSES)).cuda().index_select(dim=0, index=max_length_indices.data)
 
-        reconstructions = self.decoder((x * y[:, :, None]).view(x.size(0), -1))
+        reconstructions = self.decoder((x * y[:, :, None]).contiguous().view(x.size(0), -1))
 
         return classes, reconstructions
 
@@ -138,7 +138,7 @@ class CapsuleLoss(nn.Module):
         margin_loss = margin_loss.sum()
 
         assert torch.numel(images) == torch.numel(reconstructions)
-        images = images.view(reconstructions.size()[0], -1)
+        images = images.contiguous().view(reconstructions.size()[0], -1)
         reconstruction_loss = self.reconstruction_loss(reconstructions, images)
 
         return (margin_loss + 0.0005 * reconstruction_loss) / images.size(0)
@@ -165,6 +165,7 @@ capsule_loss = CapsuleLoss()
 capsule_loss.cuda()
 
 def train(epoch):
+    model.train()
     for batch_idx, data in enumerate(train_loader):
         inputs, labels = data
         labels = torch.LongTensor(labels)
@@ -174,6 +175,7 @@ def train(epoch):
         labels = Variable(labels).cuda()
 
         classes, reconstructions = model(inputs, labels)
+        # print(inputs, labels, classes)
         loss = capsule_loss(inputs, labels, classes, reconstructions)
 
         optimizer.zero_grad()

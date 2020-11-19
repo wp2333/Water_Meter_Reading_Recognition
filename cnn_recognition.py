@@ -16,12 +16,13 @@ import csv
 
 
 BATCH_SIZE = 100        
-EPOCHS = 1
+EPOCHS = 200
 Lr = 0.005
 
 transform_data = transforms.Compose([
     transforms.Resize((28, 28)),
     transforms.ToTensor(),     # [0,1]
+    # transforms.Normalize((0.5),(0.5))
     ])
 
 dataset_train = MyDataset(transform = transform_data)
@@ -63,11 +64,12 @@ optimizer = optim.SGD(model.parameters(), lr = Lr)
 
 
 def train(epoch):
+    model.train()
     for batch_idx, data in enumerate(train_loader):
         inputs, labels = data
 
         outputs = model(inputs)
-        print(data,outputs)
+        # print(data,outputs)
         loss = criterion(outputs, labels)
 
         optimizer.zero_grad()
