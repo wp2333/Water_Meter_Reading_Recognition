@@ -13,21 +13,25 @@ import glob
 from random import randint, sample
 import random
 
-TRAIN_DATA_PATH = "data/train"
-TEST_DATA_PATH = "data/test"
+TRAIN_DATA_PATH = "data"
+TEST_DATA_PATH = "data"
+EXT = ".png"
 
 # -----------------ready the dataset--------------------------
 def default_loader(path):
-    return Image.open(path)     # open as gray image
+    return Image.open(path).split()[0]     # open as gray image
     
 class MyDataset(Dataset):
     def __init__(self, transform=None, target_transform=None, loader=default_loader):
-        img_list = glob.glob(TRAIN_DATA_PATH + '/*.jpg')
+        img_list = glob.glob(TRAIN_DATA_PATH + '/*')
+        # print(img_list)
         imgs = []
         
-        for item in img_list:
-            label = item.split(".jpg")[0].split("/")[-1]
-            imgs.append((item, label))
+        for single_list in img_list:
+            single_list = glob.glob(single_list + "/*")
+            for item in single_list:
+                label = item.split("/")[-2]
+                imgs.append((item, label))
 
         imgs = sorted(imgs)
         random.shuffle(imgs)
@@ -58,12 +62,14 @@ class MyDataset(Dataset):
 
 class MyDataset_test(Dataset):
     def __init__(self, transform=None, target_transform=None, loader=default_loader):
-        img_list = glob.glob(TEST_DATA_PATH + '/*.jpg')
+        img_list = glob.glob(TEST_DATA_PATH + '/*')
         imgs = []
         
-        for item in img_list:
-            label = item.split(".jpg")[0].split("/")[-1]
-            imgs.append((item, label))
+        for single_list in img_list:
+            single_list = glob.glob(single_list + "/*")
+            for item in single_list:
+                label = item.split("/")[-2]
+                imgs.append((item, label))
 
         imgs = sorted(imgs)
         random.shuffle(imgs)

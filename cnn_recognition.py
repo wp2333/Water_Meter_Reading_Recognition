@@ -1,7 +1,7 @@
 # =========================================
 # Time: 2020-11-17
 # Author: wangping
-# Function: Digit Recognition
+# Function: Digit Recognition based on cnn
 # =========================================
 
 import torch
@@ -12,19 +12,25 @@ import torchvision
 from torchvision import datasets, transforms
 import torch.utils.data
 from myloader import MyDataset, MyDataset_test
+import csv
 
 
 BATCH_SIZE = 100        
-EPOCHS = 50
+EPOCHS = 1
 Lr = 0.005
 
-dataset_train = MyDataset(transform = torchvision.transforms.ToTensor())
-assert dataset_train
-train_loader = torch.utils.data.DataLoader(dataset_train, batch_size=BATCH_SIZE, shuffle=True, drop_last=True,num_workers=8)
+transform_data = transforms.Compose([
+    transforms.Resize((28, 28)),
+    transforms.ToTensor(),     # [0,1]
+    ])
 
-dataset_test = MyDataset_test(transform = torchvision.transforms.ToTensor())
+dataset_train = MyDataset(transform = transform_data)
+# assert dataset_train
+train_loader = torch.utils.data.DataLoader(dataset_train, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+
+dataset_test = MyDataset_test(transform = transform_data)
 assert dataset_test
-test_loader = torch.utils.data.DataLoader(dataset_test, batch_size=BATCH_SIZE, shuffle=False, drop_last=True,num_workers=8)
+test_loader = torch.utils.data.DataLoader(dataset_test, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
 
 
 class Detector(nn.Module):
@@ -58,10 +64,12 @@ optimizer = optim.SGD(model.parameters(), lr = Lr)
 
 def train(epoch):
     for batch_idx, data in enumerate(train_loader):
-        inputs, label = data
-        outputs = model(inputs)
+        inputs, labels = data
 
-        loss = criterion(outputs, label)
+        outputs = model(inputs)
+        print(data,outputs)
+        loss = criterion(outputs, labels)
+
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -79,6 +87,23 @@ def test():
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
         print('Test Accuracy of the model on the  test images: {} %'.format(100 * correct / total))
+
+# def generate_result(model):
+#     model.eval()
+#     correct = 0
+#     total = 0
+#     f = open('submission.csv','w',encoding='utf-8',newline=" ")
+#     csv_writer = csv.writer(f)
+#     csv_writer.writerow(["filename","result"])
+#     with torch.no_grad():
+#         for data in test_loader:
+#             images, labels = data
+#             outputs = model(images)
+#             _, predicted = torch.max(outputs.data, dim = 1)
+            
+#             csv_writer.writerow(["file_name",predicted.item()])
+#             correct += (predicted == labels).sum().item()
+#     f.close()
 
 if __name__ == '__main__':
     for epoch in range(EPOCHS):

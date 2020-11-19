@@ -8,6 +8,8 @@
 from PIL import Image
 import glob
 
+EXT = ".png"
+
 def hash_img(img):
 
     a=[]
@@ -43,10 +45,10 @@ def similarity(img1,img2):
 if __name__ == '__main__':
 	data_path = "data/"
 	Template_path = "template/"
-	for x in glob.glob(data_path + "*.png"):
+	for x in glob.glob(data_path + "*" + EXT):
 		img1 = Image.open(x)
 		max_similarity = 0
-		for y in sorted(glob.glob(Template_path + "*.png")):
+		for y in sorted(glob.glob(Template_path + "*" + EXT)):
 			img2 = Image.open(y)
 			result = similarity(img1,img2) * 100
 			if result > max_similarity:
