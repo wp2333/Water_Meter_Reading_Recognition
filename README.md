@@ -8,10 +8,10 @@
 + **Recognition:** Identify each single number
 
 ### Preprocess
-+ Doing...
++ Using UNet
 
 ### Segmentation
-+ Doing...
++ Simply divided by the distribution of pixels
 
 ### Recognition
 + **Method 1:** based on template matching
